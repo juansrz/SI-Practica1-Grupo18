@@ -177,3 +177,24 @@ print(f"Mediana: {mediana_incidencia}, Media: {media_incidencia}, Varianza: {var
 
 
 # 5) Agrupaciones y calculos de incidencias y actuaciones en caso de fraude dia de la semana
+
+group_fraude = df_contactos[df_contactos["id_ticket"].isin(df_fraude["id_ticket"])].copy()
+group_fraude["dia_semana"] = group_fraude["fecha"].dt.dayofweek
+
+group_dia = group_fraude.groupby("dia_semana")["id_ticket"].count().reset_index(name="Incidencias")
+group_dia_actuaciones = group_fraude.groupby("dia_semana")["id_ticket"].nunique().reset_index(name="Actuaciones")
+group_dia = group_dia.merge(group_dia_actuaciones, on="dia_semana", how="left")
+
+
+# Estadisticas basicas sobre el numero de incidencias de fraude por día de la semana
+mediana_dia = group_dia["Incidencias"].median()
+media_dia = group_dia["Incidencias"].mean()
+varianza_dia = group_dia["Incidencias"].var()
+max_dia = group_dia["Incidencias"].max()
+min_dia = group_dia["Incidencias"].min()
+
+print(f"Agrupacion por dia de la semana:\n{group_dia}\n")
+print(f"Estadisticas basicas por dia de la semana:")
+print(f"Mediana: {mediana_dia}, Media: {media_dia}, Varianza: {varianza_dia}, Max: {max_dia}, Min: {min_dia}\n")
+
+conn.close()
