@@ -1,3 +1,4 @@
+import os
 import sqlite3
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -48,24 +49,41 @@ plt.xlabel("Tipo de incidencia")
 plt.ylabel("Media de tiempo en dias")
 plt.title("Tiempo medio de resolucion de incidencias")
 plt.ylim(1)
-plt.show()
+plt.savefig(os.path.join("static", "images", "tiempo_mant.png"))
+plt.close()
 
 
-# 2) Grafico boxplot con los tiempos de resolucion por tipo de incidente representando los percentiles 5% y 90%.
+# 2) Gráfico boxplot con los tiempos de resolución por tipo de incidente
 
 group_incidencias = df_tickets.groupby("tipo_incidencia")["duracion_dias"].apply(list)
 
 fig, ax = plt.subplots(figsize=(12, 6))
-ax.boxplot([group_incidencias[tipo] for tipo in group_incidencias.index], vert=True, patch_artist=True, tick_labels=group_incidencias.index)
 
+# Boxplot estándar
+ax.boxplot(
+    [group_incidencias[tipo] for tipo in group_incidencias.index],
+    vert=True,
+    patch_artist=True,
+    tick_labels=group_incidencias.index
+)
+
+# Calculamos p5 y p90 de duracion_dias por tipo_incidencia
 percentil5 = df_tickets.groupby("tipo_incidencia")["duracion_dias"].quantile(0.05)
 percentil90 = df_tickets.groupby("tipo_incidencia")["duracion_dias"].quantile(0.90)
 
+# Dibujamos líneas horizontales en p5 y p90 para cada grupo
+for i, tipo in enumerate(group_incidencias.index, start=1):
+    p5 = percentil5.loc[tipo]
+    p90 = percentil90.loc[tipo]
+    ax.hlines(y=p5,  xmin=i - 0.2, xmax=i + 0.2, color='red', linestyle='--')
+    ax.hlines(y=p90, xmin=i - 0.2, xmax=i + 0.2, color='red', linestyle='--')
 
 ax.set_title("Tiempo de resolución por tipo de incidencia")
 ax.set_xlabel("Tipo de incidencia")
-ax.set_ylabel("Tiempo de resolucion en dias")
-plt.show()
+ax.set_ylabel("Tiempo de resolución (días)")
+plt.savefig(os.path.join("static", "images", "tipo_incidencia.png"))
+plt.close()
+
 
 
 # 3) Grafico de analisis de los 5 clientes mas criticos dependiendo de variables mantenimiento y tipo de incidencia
@@ -82,7 +100,8 @@ plt.xlabel("Clientes")
 plt.ylabel("Numero de incidencias")
 plt.title("Top 5 clientes mas criticos")
 plt.ylim(0, max(group_criticos["Incidencias"]) + 1)
-plt.show()
+plt.savefig(os.path.join("static", "images", "critical_clients.png"))
+plt.close()
 
 
 # 4) Grafico de analisis de las actuaciones de los empleados
@@ -98,7 +117,8 @@ plt.xlabel("Empleados")
 plt.ylabel("Numero de actuaciones")
 plt.title("Actuaciones por empleado")
 plt.ylim(10, max(group_actuaciones["Actuaciones"]) + 1)
-plt.show()
+plt.savefig(os.path.join("static", "images", "actuaciones_empleado.png"))
+plt.close()
 
 
 # 5) Grafico de actuaciones según el día de la semana
@@ -114,6 +134,7 @@ plt.title("Actuaciones de los empleados por dia de la semana")
 plt.xlabel("Dia de la semana")
 plt.ylabel("Numero de actuaciones")
 plt.ylim(25)
-plt.show()
+plt.savefig(os.path.join("static", "images", "actuaciones_semana.png"))
+plt.close()
 
 conn.close()
