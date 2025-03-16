@@ -85,7 +85,6 @@ print(f"Mín # incidencias atendidas por un empleado: {min_incid_emp}, Máx: {ma
 
 
 
-
 # -----------------------------------------------------------------------------
 #                                   Agrupaciones
 # -----------------------------------------------------------------------------
@@ -200,4 +199,3 @@ print(f"Estadisticas basicas por dia de la semana:")
 print(f"Mediana: {mediana_dia}, Media: {media_dia}, Varianza: {varianza_dia}, Max: {max_dia}, Min: {min_dia}\n")
 
 conn.close()
-

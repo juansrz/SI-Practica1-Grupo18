@@ -136,6 +136,27 @@ for ticket in data["tickets_emitidos"]:
             contacto["tiempo"]
         ))
 
+# Obtenemos el query necesario para obtener la ultima fecha de actuacion para actualizarla despues
+query_ultima_actuacion = """
+    SELECT id_ticket, MAX(fecha) AS ultima_fecha
+    FROM contactos_empleados
+    GROUP BY id_ticket
+    """
+
+df_ultima_actuacion = pd.read_sql_query(query_ultima_actuacion, conn)
+
+# Actualizamos la fecha_cierre en la tabla tickets con la ultima actuacion para cada ticket
+for index, row in df_ultima_actuacion.iterrows():
+    cursor.execute("""
+        UPDATE tickets
+        SET fecha_cierre = ?
+        WHERE id_ticket = ?
+    """, (
+        row["ultima_fecha"],
+        row["id_ticket"]
+    ))
+
+
 # Guardamos todos los cambios en la base de datos
 conn.commit()
 print("Datos insertados correctamente.")
