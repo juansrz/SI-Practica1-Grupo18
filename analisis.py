@@ -6,6 +6,7 @@ from datetime import datetime
 conn = sqlite3.connect("incidencias.db")
 df_tickets = pd.read_sql_query("SELECT * FROM tickets", conn)
 df_contactos = pd.read_sql_query("SELECT * FROM contactos_empleados", conn)
+df_empleados = pd.read_sql_query("SELECT * FROM empleados", conn)
 conn.close()
 
 # 2) Convertimos las columnas de fecha a tipo datetime
